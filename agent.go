@@ -4,6 +4,7 @@ import(
   "github.com/goamz/goamz/aws"
   "github.com/goamz/goamz/sqs"
   "os"
+  "os/exec"
   "fmt"
   "time"
 )
@@ -11,12 +12,23 @@ import(
 var(
     queueName = "registry-container-restart-messages"
     topicArn  = "arn:aws:sns:ap-southeast-1:356003847803:registry-cpu-utilization"
+    containerName = "validator-registry-api"
     auth = aws.Auth{
         AccessKey: os.Getenv("AWS_ACCESS_KEY_ID"),
         SecretKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),
     }
     conn = sqs.New(auth, aws.APSoutheast)
 )
+
+func restartDockerContainer(containerName string) {
+  args := []string{"docker", "restart", containerName}
+
+  if err := exec.Command("sudo", args...).Run(); err != nil {
+    fmt.Println(os.Stderr, err)
+    os.Exit(1)
+  }
+  fmt.Println("successfully called docker")
+}
 
 func messageReceived(queue sqs.Queue, message *sqs.Message) {
     fmt.Println("Message received")
@@ -26,6 +38,7 @@ func messageReceived(queue sqs.Queue, message *sqs.Message) {
     if err != nil {
       os.Exit(1)
     }
+    restartDockerContainer(containerName)
 }
 
 func main() {
