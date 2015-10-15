@@ -11,8 +11,6 @@ import(
 
 var(
     queueName = "registry-container-restart-messages"
-    topicArn  = "arn:aws:sns:ap-southeast-1:356003847803:registry-cpu-utilization"
-    containerName = "validator-registry-api"
     auth = aws.Auth{
         AccessKey: os.Getenv("AWS_ACCESS_KEY_ID"),
         SecretKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),
