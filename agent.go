@@ -38,7 +38,8 @@ func messageReceived(queue sqs.Queue, message *sqs.Message) {
     if err != nil {
       os.Exit(1)
     }
-    restartDockerContainer(containerName)
+    restartDockerContainer("validatorsripplecom_web")
+    restartDockerContainer("validatorsripplecom_nginx")
 }
 
 func main() {
